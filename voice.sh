@@ -44,6 +44,7 @@ print('EVT_START=' + shlex.quote(str(evts.get('start', True)).lower()))
 print('EVT_STOP=' + shlex.quote(str(evts.get('stop', True)).lower()))
 print('EVT_PERMISSION=' + shlex.quote(str(evts.get('permission', True)).lower()))
 print('EVT_FAILURE=' + shlex.quote(str(evts.get('failure', True)).lower()))
+print('START_PHRASE=' + shlex.quote(c.get('start_phrase', '')))
 " 2>/dev/null)"
 
 [ "$ENABLED" = "false" ] && exit 0
@@ -155,8 +156,12 @@ case "$EVENT" in
     [ "$EVT_START" = "false" ] && exit 0
     TRACK=$(track_session register)
     append_session_number "$TRACK"
-    PHRASES=("let's go" "let's do this" "here we go" "let's cook" "showtime" "let's build" "let's roll")
-    SAY_TEXT="${PHRASES[$((RANDOM % ${#PHRASES[@]}))]}"
+    if [ -n "${START_PHRASE:-}" ]; then
+      SAY_TEXT="$START_PHRASE"
+    else
+      PHRASES=("let's go" "let's do this" "here we go" "let's cook" "showtime" "let's build" "let's roll")
+      SAY_TEXT="${PHRASES[$((RANDOM % ${#PHRASES[@]}))]}"
+    fi
     ;;
   Stop)
     [ "$EVT_STOP" = "false" ] && exit 0
